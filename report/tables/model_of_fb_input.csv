@@ -1,0 +1,34 @@
+,coef(95%CI),p value
+(Intercept),"5547.49 ( -66579.2 , 77674.17 )",0.8801
+age,"-185.8 ( -344.32 , -27.28 )",0.0217
+gender = Male,"4531.43 ( -469.87 , 9532.73 )",0.0757
+add drug therapy,"13615.71 ( 9740.73 , 17490.69 )",< 0.0001
+weight at admission,"-654.99 ( -1106.86 , -203.12 )",0.0045
+weight before dialysis,"547.13 ( 135.69 , 958.57 )",0.0092
+BMI,"808.57 ( 185.9 , 1431.24 )",0.011
+weight gain before dialysis perday,"-1801.5 ( -2890.19 , -712.81 )",0.0012
+inotropes vasopressor,"9832.52 ( 5130.42 , 14534.63 )",< 0.0001
+ACEI,"-4368.85 ( -8305.84 , -431.85 )",0.0297
+vasodilator,"2862.3 ( -1116.73 , 6841.34 )",0.1584
+anemia,"4280.32 ( 401.01 , 8159.62 )",0.0306
+infection,"8839.66 ( 4830.05 , 12849.26 )",< 0.0001
+fluid overload before dialysis,"1.17 ( 1 , 1.35 )",< 0.0001
+urine output before dialysis,"1.11 ( 0.88 , 1.34 )",< 0.0001
+HR after DR,"108.25 ( -0.12 , 216.61 )",0.0503
+SBP at admission,"83.28 ( -12.26 , 178.81 )",0.0875
+SBP after DR,"-104.57 ( -213.11 , 3.97 )",0.059
+SPO2 at admission,"-214.38 ( -480.24 , 51.48 )",0.1139
+BUN at admission,"124.88 ( 15.14 , 234.62 )",0.0258
+creatinine at admission,"-3401.29 ( -6905.74 , 103.16 )",0.0571
+creatinine after DR,"2903.09 ( -861.49 , 6667.66 )",0.1305
+sodium before dialysis,"525.94 ( 102.6 , 949.29 )",0.0149
+sodium at admission,"-474.53 ( -919.53 , -29.52 )",0.0366
+potassium before dialysis,"2620.54 ( -789.82 , 6030.9 )",0.1319
+potassium at admission,"-2153.76 ( -4733.94 , 426.42 )",0.1017
+HCO3 before dialysis,"927.46 ( 352.18 , 1502.73 )",0.0016
+HCO3 after DR,"-915.08 ( -1503.09 , -327.07 )",0.0023
+GFR before dialysis,"-227.1 ( -380.87 , -73.33 )",0.0038
+GFR after DR,"293.61 ( 114.76 , 472.45 )",0.0013
+albumin before dialysis,"-9226 ( -13909.25 , -4542.74 )",1.00E-04
+albumin at admission,"3458.86 ( -1490 , 8407.72 )",0.1705
+rrt,"2872.87 ( -5059.38 , 10805.12 )",0.4774

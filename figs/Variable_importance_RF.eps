@@ -1,0 +1,523 @@
+%!PS-Adobe-3.0 EPSF-3.0
+%%DocumentNeededResources: font Helvetica
+%%+ font Helvetica-Bold
+%%+ font Helvetica-Oblique
+%%+ font Helvetica-BoldOblique
+%%+ font Symbol
+%%Title: R Graphics Output
+%%Creator: R Software
+%%Pages: (atend)
+%%BoundingBox: 0 0 525 434
+%%EndComments
+%%BeginProlog
+/bp  { gs sRGB gs } def
+% begin .ps.prolog
+/gs  { gsave } bind def
+/gr  { grestore } bind def
+/ep  { showpage gr gr } bind def
+/m   { moveto } bind def
+/l  { rlineto } bind def
+/np  { newpath } bind def
+/cp  { closepath } bind def
+/f   { fill } bind def
+/o   { stroke } bind def
+/c   { newpath 0 360 arc } bind def
+/r   { 4 2 roll moveto 1 copy 3 -1 roll exch 0 exch rlineto 0 rlineto -1 mul 0 exch rlineto closepath } bind def
+/p1  { stroke } bind def
+/p2  { gsave bg fill grestore newpath } bind def
+/p3  { gsave bg fill grestore stroke } bind def
+/p6  { gsave bg eofill grestore newpath } bind def
+/p7  { gsave bg eofill grestore stroke } bind def
+/t   { 5 -2 roll moveto gsave rotate
+       1 index stringwidth pop
+       mul neg 0 rmoveto show grestore } bind def
+/ta  { 4 -2 roll moveto gsave rotate show } bind def
+/tb  { 2 -1 roll 0 rmoveto show } bind def
+/cl  { grestore gsave newpath 3 index 3 index moveto 1 index
+       4 -1 roll lineto  exch 1 index lineto lineto
+       closepath clip newpath } bind def
+/rgb { setrgbcolor } bind def
+/s   { scalefont setfont } bind def
+% end   .ps.prolog
+/sRGB { [ /CIEBasedABC
+          << /DecodeLMN
+               [ { dup 0.03928 le
+                        {12.92321 div}
+                        {0.055 add 1.055 div 2.4 exp }
+                     ifelse
+                 } bind dup dup
+               ]
+             /MatrixLMN [0.412457 0.212673 0.019334
+                         0.357576 0.715152 0.119192
+                         0.180437 0.072175 0.950301]
+             /WhitePoint [0.9505 1.0 1.0890]
+           >>
+         ] setcolorspace } bind def
+/srgb { setcolor } bind def
+%%IncludeResource: font Helvetica
+/Helvetica findfont
+dup length dict begin
+  {1 index /FID ne {def} {pop pop} ifelse} forall
+  /Encoding ISOLatin1Encoding def
+  currentdict
+  end
+/Font1 exch definefont pop
+%%IncludeResource: font Helvetica-Bold
+/Helvetica-Bold findfont
+dup length dict begin
+  {1 index /FID ne {def} {pop pop} ifelse} forall
+  /Encoding ISOLatin1Encoding def
+  currentdict
+  end
+/Font2 exch definefont pop
+%%IncludeResource: font Helvetica-Oblique
+/Helvetica-Oblique findfont
+dup length dict begin
+  {1 index /FID ne {def} {pop pop} ifelse} forall
+  /Encoding ISOLatin1Encoding def
+  currentdict
+  end
+/Font3 exch definefont pop
+%%IncludeResource: font Helvetica-BoldOblique
+/Helvetica-BoldOblique findfont
+dup length dict begin
+  {1 index /FID ne {def} {pop pop} ifelse} forall
+  /Encoding ISOLatin1Encoding def
+  currentdict
+  end
+/Font4 exch definefont pop
+%%IncludeResource: font Symbol
+/Symbol findfont
+dup length dict begin
+  {1 index /FID ne {def} {pop pop} ifelse} forall
+  currentdict
+  end
+/Font5 exch definefont pop
+%%EndProlog
+%%Page: 1 1
+bp
+/bg { 1 1 1 srgb } def
+0.00 0.00 525.00 434.25 r p2
+72.00 57.60 248.10 347.85 cl
+0.00 0.00 525.00 434.25 cl
+/Font1 findfont 12 s
+0 0 0 srgb
+14.40 67.11 (h) 0 ta
+-0.360 (yper) tb
+0.480 (tension) tb gr
+14.40 80.93 (ischemic_hear) 0 ta
+0.480 (t_disease) tb gr
+14.40 94.76 (w) 0 ta
+-0.120 (eight_bef) tb
+-0.360 (ore_dialysis) tb gr
+14.40 108.58 (sodium_dr) 0 0 t
+14.40 122.40 (alb) 0 ta
+-0.240 (umin_dr) tb gr
+14.40 136.22 (w) 0 ta
+-0.120 (eight_adm) tb gr
+14.40 150.04 (creatinine_adm) 0 0 t
+14.40 163.86 (hco3_dr) 0 0 t
+14.40 177.68 (w) 0 ta
+-0.120 (eight_after_dr) tb gr
+14.40 191.51 (alb) 0 ta
+-0.240 (umin_adm) tb gr
+14.40 205.33 (renal_f) 0 ta
+-0.360 (ailure) tb gr
+14.40 219.15 (potassium_dr) 0 0 t
+14.40 232.97 (b) 0 ta
+-0.240 (un_adm) tb gr
+14.40 246.79 (daily_fluid_o) 0 ta
+-0.180 (v) tb
+-0.300 (er) tb
+0.180 (load_to_rr) tb
+0.480 (t) tb gr
+14.40 260.61 (b) 0 ta
+-0.240 (un_dr) tb gr
+14.40 274.43 (gfr_adm) 0 0 t
+14.40 288.26 (spo2_adm) 0 0 t
+14.40 302.08 (gfr_dr) 0 0 t
+14.40 315.90 (spo2_dr) 0 0 t
+14.40 329.72 (creatinine_dr) 0 0 t
+162.35 57.60 248.10 347.85 cl
+0.7451 0.7451 0.7451 srgb
+0.75 setlinewidth
+[ 0.00 3.00] 0 setdash
+1 setlinecap
+1 setlinejoin
+10.00 setmiterlimit
+np
+162.35 71.42 m
+85.75 0 l
+o
+np
+162.35 85.24 m
+85.75 0 l
+o
+np
+162.35 99.06 m
+85.75 0 l
+o
+np
+162.35 112.89 m
+85.75 0 l
+o
+np
+162.35 126.71 m
+85.75 0 l
+o
+np
+162.35 140.53 m
+85.75 0 l
+o
+np
+162.35 154.35 m
+85.75 0 l
+o
+np
+162.35 168.17 m
+85.75 0 l
+o
+np
+162.35 181.99 m
+85.75 0 l
+o
+np
+162.35 195.81 m
+85.75 0 l
+o
+np
+162.35 209.64 m
+85.75 0 l
+o
+np
+162.35 223.46 m
+85.75 0 l
+o
+np
+162.35 237.28 m
+85.75 0 l
+o
+np
+162.35 251.10 m
+85.75 0 l
+o
+np
+162.35 264.92 m
+85.75 0 l
+o
+np
+162.35 278.74 m
+85.75 0 l
+o
+np
+162.35 292.56 m
+85.75 0 l
+o
+np
+162.35 306.39 m
+85.75 0 l
+o
+np
+162.35 320.21 m
+85.75 0 l
+o
+np
+162.35 334.03 m
+85.75 0 l
+o
+/bg { 1 1 1 srgb } def
+0 0 0 srgb
+0.75 setlinewidth
+[] 0 setdash
+165.53 71.42 2.70 c p3
+166.30 85.24 2.70 c p3
+169.14 99.06 2.70 c p3
+169.43 112.89 2.70 c p3
+170.72 126.71 2.70 c p3
+171.99 140.53 2.70 c p3
+172.34 154.35 2.70 c p3
+175.03 168.17 2.70 c p3
+176.46 181.99 2.70 c p3
+176.50 195.81 2.70 c p3
+182.19 209.64 2.70 c p3
+183.01 223.46 2.70 c p3
+184.84 237.28 2.70 c p3
+185.93 251.10 2.70 c p3
+206.22 264.92 2.70 c p3
+215.51 278.74 2.70 c p3
+226.17 292.56 2.70 c p3
+232.42 306.39 2.70 c p3
+244.15 320.21 2.70 c p3
+244.92 334.03 2.70 c p3
+0.00 0.00 525.00 434.25 cl
+0 0 0 srgb
+0.75 setlinewidth
+[] 0 setdash
+1 setlinecap
+1 setlinejoin
+10.00 setmiterlimit
+np
+164.35 57.60 m
+81.31 0 l
+o
+np
+164.35 57.60 m
+0 -7.20 l
+o
+np
+180.61 57.60 m
+0 -7.20 l
+o
+np
+196.87 57.60 m
+0 -7.20 l
+o
+np
+213.13 57.60 m
+0 -7.20 l
+o
+np
+229.39 57.60 m
+0 -7.20 l
+o
+np
+245.66 57.60 m
+0 -7.20 l
+o
+/Font1 findfont 12 s
+164.35 34.56 (2) .5 0 t
+196.87 34.56 (4) .5 0 t
+229.39 34.56 (6) .5 0 t
+np
+162.35 57.60 m
+85.75 0 l
+0 290.25 l
+-85.75 0 l
+0 -290.25 l
+o
+0.00 0.00 262.50 405.45 cl
+/Font1 findfont 12 s
+0 0 0 srgb
+139.88 17.28 (MeanDecreaseAccur) 0 ta
+-0.120 (acy) tb gr
+334.50 57.60 510.60 347.85 cl
+0.00 0.00 525.00 434.25 cl
+/Font1 findfont 12 s
+0 0 0 srgb
+276.90 67.11 (w) 0 ta
+-0.120 (eight_bef) tb
+-0.360 (ore_dialysis) tb gr
+276.90 80.93 (w) 0 ta
+-0.120 (eight_after_dr) tb gr
+276.90 94.76 (potassium_adm) 0 0 t
+276.90 108.58 (w) 0 ta
+-0.120 (eight_adm) tb gr
+276.90 122.40 (potassium_dr) 0 0 t
+276.90 136.22 (b) 0 ta
+-0.240 (un_adm) tb gr
+276.90 150.04 (tem_dr) 0 0 t
+276.90 163.86 (hco3_adm) 0 0 t
+276.90 177.68 (hco3_dr) 0 0 t
+276.90 191.51 (alb) 0 ta
+-0.240 (umin_adm) tb gr
+276.90 205.33 (daily_fluid_o) 0 ta
+-0.180 (v) tb
+-0.300 (er) tb
+0.180 (load_to_rr) tb
+0.480 (t) tb gr
+276.90 219.15 (daily_uo_to_rr) 0 ta
+0.480 (t) tb gr
+276.90 232.97 (alb) 0 ta
+-0.240 (umin_dr) tb gr
+276.90 246.79 (creatinine_adm) 0 0 t
+276.90 260.61 (gfr_adm) 0 0 t
+276.90 274.43 (spo2_adm) 0 0 t
+276.90 288.26 (spo2_dr) 0 0 t
+276.90 302.08 (b) 0 ta
+-0.240 (un_dr) tb gr
+276.90 315.90 (gfr_dr) 0 0 t
+276.90 329.72 (creatinine_dr) 0 0 t
+424.85 57.60 510.60 347.85 cl
+0.7451 0.7451 0.7451 srgb
+0.75 setlinewidth
+[ 0.00 3.00] 0 setdash
+1 setlinecap
+1 setlinejoin
+10.00 setmiterlimit
+np
+424.85 71.42 m
+85.75 0 l
+o
+np
+424.85 85.24 m
+85.75 0 l
+o
+np
+424.85 99.06 m
+85.75 0 l
+o
+np
+424.85 112.89 m
+85.75 0 l
+o
+np
+424.85 126.71 m
+85.75 0 l
+o
+np
+424.85 140.53 m
+85.75 0 l
+o
+np
+424.85 154.35 m
+85.75 0 l
+o
+np
+424.85 168.17 m
+85.75 0 l
+o
+np
+424.85 181.99 m
+85.75 0 l
+o
+np
+424.85 195.81 m
+85.75 0 l
+o
+np
+424.85 209.64 m
+85.75 0 l
+o
+np
+424.85 223.46 m
+85.75 0 l
+o
+np
+424.85 237.28 m
+85.75 0 l
+o
+np
+424.85 251.10 m
+85.75 0 l
+o
+np
+424.85 264.92 m
+85.75 0 l
+o
+np
+424.85 278.74 m
+85.75 0 l
+o
+np
+424.85 292.56 m
+85.75 0 l
+o
+np
+424.85 306.39 m
+85.75 0 l
+o
+np
+424.85 320.21 m
+85.75 0 l
+o
+np
+424.85 334.03 m
+85.75 0 l
+o
+/bg { 1 1 1 srgb } def
+0 0 0 srgb
+0.75 setlinewidth
+[] 0 setdash
+451.75 71.42 2.70 c p3
+454.06 85.24 2.70 c p3
+454.30 99.06 2.70 c p3
+454.42 112.89 2.70 c p3
+455.02 126.71 2.70 c p3
+455.81 140.53 2.70 c p3
+456.80 154.35 2.70 c p3
+457.05 168.17 2.70 c p3
+457.82 181.99 2.70 c p3
+460.20 195.81 2.70 c p3
+461.17 209.64 2.70 c p3
+461.39 223.46 2.70 c p3
+461.93 237.28 2.70 c p3
+470.24 251.10 2.70 c p3
+472.07 264.92 2.70 c p3
+479.60 278.74 2.70 c p3
+483.67 292.56 2.70 c p3
+490.93 306.39 2.70 c p3
+506.89 320.21 2.70 c p3
+507.42 334.03 2.70 c p3
+0.00 0.00 525.00 434.25 cl
+0 0 0 srgb
+0.75 setlinewidth
+[] 0 setdash
+1 setlinecap
+1 setlinejoin
+10.00 setmiterlimit
+np
+428.03 57.60 m
+78.11 0 l
+o
+np
+428.03 57.60 m
+0 -7.20 l
+o
+np
+439.19 57.60 m
+0 -7.20 l
+o
+np
+450.35 57.60 m
+0 -7.20 l
+o
+np
+461.50 57.60 m
+0 -7.20 l
+o
+np
+472.66 57.60 m
+0 -7.20 l
+o
+np
+483.82 57.60 m
+0 -7.20 l
+o
+np
+494.98 57.60 m
+0 -7.20 l
+o
+np
+506.14 57.60 m
+0 -7.20 l
+o
+/Font1 findfont 12 s
+428.03 34.56 (0) .5 0 t
+450.35 34.56 (2) .5 0 t
+472.66 34.56 (4) .5 0 t
+494.98 34.56 (6) .5 0 t
+np
+424.85 57.60 m
+85.75 0 l
+0 290.25 l
+-85.75 0 l
+0 -290.25 l
+o
+262.50 0.00 525.00 405.45 cl
+/Font1 findfont 12 s
+0 0 0 srgb
+467.73 17.28 (MeanDecreaseGini) .5 0 t
+0.00 0.00 525.00 434.25 cl
+/Font1 findfont 14 s
+0 0 0 srgb
+121.67 408.33 (V) 0 ta
+-0.980 (ar) tb
+0.210 (iab) tb
+-0.280 (le impor) tb
+0.560 (tance\(T) tb
+-1.680 (op 20\), Random F) tb
+-0.420 (orest) tb gr
+ep
+%%Trailer
+%%Pages: 1
+%%EOF

@@ -1,0 +1,33 @@
+,coef(95%CI),p value
+(Intercept),"-39540.3 ( -159018.15 , 79937.56 )",0.5162
+age,"-160.69 ( -233.26 , -88.13 )",< 0.0001
+add drug therapy,"8757.86 ( 6866.13 , 10649.59 )",< 0.0001
+weight after DR,"76.4 ( 39.48 , 113.32 )",1.00E-04
+weight gain before dialysis perday,"-376.6 ( -738.41 , -14.78 )",0.0414
+inotropes vasopressor,"5912.19 ( 3720.54 , 8103.83 )",< 0.0001
+diabetes,"-2457.38 ( -4326.06 , -588.71 )",0.01
+anemia,"1404.25 ( -572.37 , 3380.88 )",0.1636
+infection,"4753 ( 2781 , 6725 )",< 0.0001
+alcohol abuse,"-3299.93 ( -7649.52 , 1049.67 )",0.1369
+daily fluid overload before dialysis,"0.58 ( 0.23 , 0.93 )",0.0011
+urine output before dialysis,"1.02 ( 0.9 , 1.14 )",< 0.0001
+daily urine output before dialysis,"1.93 ( 1.15 , 2.71 )",< 0.0001
+SPO2 before dialysis,"129.88 ( 8.29 , 251.47 )",0.0363
+temperature before dialysis,"742.81 ( 280.63 , 1204.98 )",0.0017
+temperature at admission,"-646.64 ( -1166.88 , -126.39 )",0.0149
+temperature after DR,"1029.11 ( -117.95 , 2176.18 )",0.0786
+bun before dialysis,"129.12 ( 60.49 , 197.75 )",2.00E-04
+BUN after DR,"-85.84 ( -160.33 , -11.35 )",0.024
+sodium before dialysis,"237.61 ( -38.87 , 514.09 )",0.092
+sodium after DR,"-388.93 ( -683.51 , -94.36 )",0.0097
+potassium at admission,"-1225.45 ( -2430.49 , -20.41 )",0.0463
+hemoglobin before dialysis,"-712.04 ( -1578.67 , 154.6 )",0.1072
+hemoglobin after DR,"671.93 ( -156.47 , 1500.34 )",0.1118
+HCO3 before dialysis,"932.44 ( 646.46 , 1218.42 )",< 0.0001
+HCO3 after DR,"-792.06 ( -1091.89 , -492.23 )",< 0.0001
+GFR before dialysis,"107.87 ( 22.88 , 192.87 )",0.0129
+GFR after DR,"-80.23 ( -165.89 , 5.43 )",0.0664
+PH before dialysis,"18362.99 ( 2444.76 , 34281.21 )",0.0238
+PH after DR,"-16255.41 ( -29616.75 , -2894.08 )",0.0172
+albumin after DR,"-2180.84 ( -3772.03 , -589.66 )",0.0073
+rrt,"-6368.12 ( -10233.3 , -2502.95 )",0.0013

@@ -1,0 +1,232 @@
+---
+title: "Predict model of RRT"
+author: "Zhang Yuan"
+date: "3/3/2018"
+output: html_document
+---
+
+```{r}
+source('~/Documents/python-projects/Datathon-DR/scr/R/help.R')
+```
+
+```{r}
+# load data
+library(readr)
+train.data <- read.csv('~/Documents/python-projects/Datathon-DR/data/processed/train_data.csv')[, -1]
+valid.data <- read.csv('~/Documents/python-projects/Datathon-DR/data/processed/valid_data.csv')[, -1]
+
+# data interpolation
+train.data <- DataInterp(train.data)
+valid.data <- DataInterp(valid.data)
+# remove variables related to the third timestamp
+train.data <- train.data[, names(train.data) %in% c('age', 'gender', 'add_drug_therapy', 'change_drug_therapy', 'height', 'weight_adm', 'weight_after_dr', 
+'bbr', 'inotropes_vasopressor', 'acei', 'mra', 'vasodilator', 
+'ischemic_heart_disease', 'cardiomyopathies', 'valvular_disease', 'atrial_fibrilation', 'hyperlipidemia', 'hypertension', 'diabetes', 'sleep_disordered_breathing', 'renal_failure', 'anemia', 'infection', 'alcohol_abuse',
+'hr_adm', 'hr_dr', 'sbp_adm', 'sbp_dr', 'dbp_adm', 'dbp_dr', 'spo2_adm', 'spo2_dr', 'tem_adm', 'tem_dr', 
+'base_excess_adm', 'bun_adm', 'bun_dr', 'creatinine_adm', 'creatinine_dr', 'sodium_adm', 'sodium_dr', 'potassium_adm', 'potassium_dr', 'hemoglobin_adm', 'hemoglobin_dr', 'hco3_adm', 'hco3_dr', 'gfr_adm', 'gfr_dr', 'ph_adm', 'ph_dr', 'albumin_adm', 'albumin_dr', 'rrt')]
+
+valid.data <- valid.data[, names(valid.data) %in% c('age', 'gender', 'add_drug_therapy', 'change_drug_therapy', 'height', 'weight_adm', 'weight_after_dr', 
+'bbr', 'inotropes_vasopressor', 'acei', 'mra', 'vasodilator', 
+'ischemic_heart_disease', 'cardiomyopathies', 'valvular_disease', 'atrial_fibrilation', 'hyperlipidemia', 'hypertension', 'diabetes', 'sleep_disordered_breathing', 'renal_failure', 'anemia', 'infection', 'alcohol_abuse',
+'hr_adm', 'hr_dr', 'sbp_adm', 'sbp_dr', 'dbp_adm', 'dbp_dr', 'spo2_adm', 'spo2_dr', 'tem_adm', 'tem_dr', 
+'base_excess_adm', 'bun_adm', 'bun_dr', 'creatinine_adm', 'creatinine_dr', 'sodium_adm', 'sodium_dr', 'potassium_adm', 'potassium_dr', 'hemoglobin_adm', 'hemoglobin_dr', 'hco3_adm', 'hco3_dr', 'gfr_adm', 'gfr_dr', 'ph_adm', 'ph_dr', 'albumin_adm', 'albumin_dr', 'rrt')]
+```
+
+Use lasso regression for variable selection
+```{r}
+library(glmnet)
+# lasso regression
+# =================
+data <- train.data
+y <- as.numeric(as.character(data$rrt))
+# remove outcome variables
+x <- data[, names(data) %in% c('hadm_id', 'los_icu', 'los_hos', 'hospital_expire_flag') == FALSE]
+# only include variables at admission and DR 
+x <- data[, names(data) %in% c('age', 'gender', 'add_drug_therapy', 'change_drug_therapy', 'height', 'weight_adm', 'weight_after_dr', 
+'bbr', 'inotropes_vasopressor', 'acei', 'mra', 'vasodilator', 
+'ischemic_heart_disease', 'cardiomyopathies', 'valvular_disease', 'atrial_fibrilation', 'hyperlipidemia', 'hypertension', 'diabetes', 'sleep_disordered_breathing', 'renal_failure', 'anemia', 'infection', 'alcohol_abuse',
+'hr_adm', 'hr_dr', 'sbp_adm', 'sbp_dr', 'dbp_adm', 'dbp_dr', 'spo2_adm', 'spo2_dr', 'tem_adm', 'tem_dr', 
+'base_excess_adm', 'bun_adm', 'bun_dr', 'creatinine_adm', 'creatinine_dr', 'sodium_adm', 'sodium_dr', 'potassium_adm', 'potassium_dr', 'hemoglobin_adm', 'hemoglobin_dr', 'hco3_adm', 'hco3_dr', 'gfr_adm', 'gfr_dr', 'ph_adm', 'ph_dr', 'albumin_adm', 'albumin_dr')]
+x[, ] <- lapply(x[, ], as.character)
+x[, ] <- lapply(x[, ], as.numeric)
+x <- as.matrix(x[, ])
+
+set.seed(999)
+fit.lasso <- cv.glmnet(x, y, family='binomial', alpha=1, parallel=TRUE, standardize=TRUE, type.measure='auc')
+plot(fit.lasso)
+fit.lasso$lambda.min
+fit.lasso$lambda.1se
+coef(fit.lasso, s=fit.lasso$lambda.min)
+
+# remove variables:
+# 'gender', 'add_drug_therapy', 'height', 'weight_adm', 'weight_after_dr', 'bbr', 'vasodilator', 'ischemic_heart_disease', 'hypertension', 'sbp_adm', 'sbp_dr', 'tem_adm', 'tem_dr', 'creatinine_adm', 'hemoglobin_dr', 'hco3_adm', 'hco3_dr', 'ph_dr'
+train.data <- train.data[, names(train.data) %in% c('gender', 'add_drug_therapy', 'height', 'weight_adm', 'weight_after_dr', 'bbr', 'vasodilator', 'ischemic_heart_disease', 'hypertension', 'sbp_adm', 'sbp_dr', 'tem_adm', 'tem_dr', 'creatinine_adm', 'hemoglobin_dr', 'hco3_adm', 'hco3_dr', 'ph_dr') == F]
+```
+
+Use random forest to predict
+
+At first the result is so good, so I examine the dataset, notice that variables on the third timestamp have many missings for non-rrt patients(about 500 patients cann't defined this time). In classification, do not include these variables. --2018.01.09
+
+Model below contains variables on admission and DR
+```{r}
+library(randomForest)
+library(pROC)
+library(ROCR)
+library(dplyr)
+
+data.rf <- train.data
+data.rf$rrt <- as.factor(data.rf$rrt)
+
+# use 10-fold 
+library(caret)
+set.seed(7)
+folds <- createFolds(y = data.rf$rrt, k=10)
+aucsum <- 0
+impresult <- as.data.frame(colnames(train.data))
+colnames(impresult) <- 'var'
+impresult$var <- as.character(impresult$var)
+for (i in 1:10){
+  fold.test <- data.rf[folds[[i]], ]
+  fold.train <- data.rf[-folds[[i]], ]
+  rf <- randomForest(rrt ~ .
+               , data = fold.train, ntree=150, proximity=TRUE,importance=TRUE)  
+  # importance(rf)
+  a <- as.data.frame(importance(rf))[, -c(1, 2)]
+  a$var <- rownames(a)
+  impresult <- merge(impresult, a, by = 'var')
+  # varImpPlot(rf, n.var = 20, main = 'Variable importance, Random Forest')
+  fold.test$pred2 <- predict(rf, fold.test, type = 'prob')
+  rocobj1 <- plot.roc(fold.test$rrt,
+                      fold.test$pred2[, 2],
+                      percent=TRUE,ci=TRUE,col="#1c61b6",
+                      print.auc=TRUE)
+
+  pred3 <- predict(rf, fold.test, type = 'prob')
+  z <- table(predict(rf, fold.test), fold.test$rrt)
+  q <- sum(diag(z))/sum(z)
+  aucsum <- aucsum + rocobj1$auc
+}
+auc.rt <- aucsum/10
+impresult$meanAccuracy <- rowMeans(as.matrix(impresult[, c(2, 4, 6, 8, 10, 12, 14, 16, 18, 20)], na.rm = FALSE, dims = 1))
+impresult$meanGini <- rowMeans(as.matrix(impresult[, c(3, 5, 7, 9, 11, 13, 15, 17, 19, 21)], na.rm = FALSE, dims = 1))
+impresult <- impresult[order(impresult$meanAccuracy, decreasing = T), ]
+a <- impresult[1:20, ]
+row.names(a) <- c('GFR after DR', 'creatinine after DR', 'SPO2 at admission', 'GFR at admission', 'BUN after DR', 'SPO2 after DR', 'albumin after DR', 'BUN at admission', 'albumin at admission', 'potassium after DR', 'age', 'DBP after DR', 'heart rate at admission', 'potassium at admission', 'DBP at admission', 'sodium after DR', 'ACEI', 'heart rate after DR', 'hyperlipidemia', 'sodium at admission')
+ggplot(data = a, mapping = aes(x = reorder(row.names(a), meanAccuracy), y = meanAccuracy)) + 
+  geom_bar(stat= 'identity') +              
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1), plot.margin = unit(c(1,1,1,1),"cm")) +
+  xlab('variable') +
+  ylab('Variable importance(Accuracy)')
+
+# test on validation dataset
+# final model
+data.rf <- train.data[, names(train.data) %in% c('gfr_dr', 'creatinine_dr', "spo2_adm", "bun_dr", "spo2_dr","gfr_adm", "bun_adm", "albumin_dr","potassium_dr", "albumin_adm", "age", "dbp_dr", "hr_adm", "potassium_adm", "dbp_adm", "hr_adm", "sodium_dr", "acei", 'hr_dr', 'hyperlipidemia', 'sodium_adm', 'rrt')]
+data.rf$rrt <- as.factor(data.rf$rrt)
+rf <- randomForest(rrt ~ .
+               , data = data.rf, ntree=150, proximity=TRUE,importance=TRUE)  
+
+valid.rf <- valid.data[, names(valid.data) %in% c('gfr_dr', 'creatinine_dr', "spo2_adm", "bun_dr", "spo2_dr","gfr_adm", "bun_adm", "albumin_dr","potassium_dr", "albumin_adm", "age", "dbp_dr", "hr_adm", "potassium_adm", "dbp_adm", "hr_adm", "sodium_dr", "acei", 'hr_dr', 'hyperlipidemia', 'sodium_adm', 'rrt')]
+valid.rf$rrt <- as.factor(valid.rf$rrt)
+
+valid.rf$pred2 <- predict(rf, valid.rf, type = 'prob')
+  rocobj1 <- plot.roc(valid.rf$rrt,
+                      valid.rf$pred2[, 2],
+                      percent=TRUE,ci=TRUE,col="#1c61b6",
+                      print.auc=TRUE)
+# AUC on validate dataset was 87.1%(80.3%-93.8%)
+
+
+# second plot measured by Gini
+impresult <- impresult[order(impresult$meanGini, decreasing = T), ]
+a <- impresult[1:20, ]
+row.names(a) <- c('creatinine after DR', 'GFR after DR', 'BUN after DR', 'SPO2 at admission', 'GFR at admission', 'albumin after DR', 'SPO2 after DR', 'albumin at admission', 'BUN at admission', 'potassium after DR', 'DBP after DR', 'age', 'potassium at admission', 'hemoglobin at admission', 'heart rate after DR', 'heart rate at admission', 'DBP at admission', 'sodium after DR', 'PH at admission', 'sodium at admission')
+ggplot(data = a, mapping = aes(x = reorder(row.names(a), meanGini), y = meanGini)) + 
+  geom_bar(stat= 'identity') +              
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1), plot.margin = unit(c(1,1,1,1),"cm")) +
+  xlab('variable') +
+  ylab('Variable importance(Gini)')
+```
+
+
+Model 2
+Use variable on step regression
+
+```{r}
+library(randomForest)
+library(pROC)
+library(ROCR)
+library(dplyr)
+data.rf <- train.data[, names(train.data) %in% c('age', 'spo2_adm', 'acei', 'hyperlipidemia', 'creatinine_dr', 'gfr_dr', 'albumin_dr', 'rrt')]
+data.rf$rrt <- as.factor(data.rf$rrt)
+# use 10-fold 
+library(caret)
+set.seed(7)
+folds <- createFolds(y = data.rf$rrt, k=10)
+aucsum <- 0
+impresult <- as.data.frame(colnames(train.data))
+colnames(impresult) <- 'var'
+impresult$var <- as.character(impresult$var)
+
+for (i in 1:10){
+  fold.test <- data.rf[folds[[i]], ]
+  fold.train <- data.rf[-folds[[i]], ]
+  rf <- randomForest(rrt ~ .
+               , data = fold.train, ntree=200, proximity=TRUE,importance=TRUE)  
+  # variable importance
+  a <- as.data.frame(importance(rf))[, -c(1, 2)]
+  a$var <- rownames(a)
+  impresult <- merge(impresult, a, by = 'var')
+  varImpPlot(rf, main = 'Variable importance, Random Forest')
+  fold.test$pred2 <- predict(rf, fold.test, type = 'prob')
+  rocobj1 <- plot.roc(fold.test$rrt,
+                      fold.test$pred2[, 2],
+                      percent=TRUE,ci=TRUE,col="#1c61b6",
+                      print.auc=TRUE)
+
+  pred3 <- predict(rf, fold.test, type = 'prob')
+  z <- table(predict(rf, fold.test), fold.test$rrt)
+  q <- sum(diag(z))/sum(z)
+  aucsum <- aucsum + rocobj1$auc
+}
+auc.rt <- aucsum/10
+
+# test on validation dataset
+# final model
+data.rf <- train.data[, names(train.data) %in% c('age', 'spo2_adm', 'acei', 'hyperlipidemia', 'creatinine_dr', 'gfr_dr', 'albumin_dr', 'rrt')]
+data.rf$rrt <- as.factor(data.rf$rrt)
+rf <- randomForest(rrt ~ .
+               , data = data.rf, ntree=150, proximity=TRUE,importance=TRUE)  
+
+valid.rf <- valid.data[, names(valid.data) %in% c('age', 'spo2_adm', 'acei', 'hyperlipidemia', 'creatinine_dr', 'gfr_dr', 'albumin_dr', 'rrt')]
+valid.rf$rrt <- as.factor(valid.rf$rrt)
+
+valid.rf$pred2 <- predict(rf, valid.rf, type = 'prob')
+  rocobj1 <- plot.roc(valid.rf$rrt,
+                      valid.rf$pred2[, 2],
+                      percent=TRUE,ci=TRUE,col="#1c61b6",
+                      print.auc=TRUE)
+# AUC on validate dataset was 88.3%(82.1%-94.4%)
+
+
+
+impresult$meanAccuracy <- rowMeans(as.matrix(impresult[, c(2, 4, 6, 8, 10, 12, 14, 16, 18, 20)], na.rm = FALSE, dims = 1))
+impresult$meanGini <- rowMeans(as.matrix(impresult[, c(3, 5, 7, 9, 11, 13, 15, 17, 19, 21)], na.rm = FALSE, dims = 1))
+impresult <- impresult[order(impresult$meanAccuracy, decreasing = T), ]
+a <- impresult
+row.names(a) <- c('GFR after DR', 'creatinine after DR', 'SPO2 at admission', 'age', 'albumin after DR', 'hyperlipidemia', 'ACEI')
+ggplot(data = a, mapping = aes(x = reorder(row.names(a), meanAccuracy), y = meanAccuracy)) + 
+  geom_bar(stat= 'identity') +              
+  theme(axis.text.x = element_text(angle = 30, hjust = 1, vjust = 1), plot.margin = unit(c(1,1,1,1),"cm")) +
+  xlab('variable') +
+  ylab('Variable importance(Accuracy)')
+
+
+impresult <- impresult[order(impresult$meanGini, decreasing = T), ]
+a <- impresult
+row.names(a) <- c('GFR after DR', 'creatinine after DR', 'SPO2 at admission', 'albumin after DR', 'age', 'ACEI', 'hyperlipidemia')
+ggplot(data = a, mapping = aes(x = reorder(row.names(a), meanGini), y = meanGini)) + 
+  geom_bar(stat= 'identity') +              
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1), plot.margin = unit(c(1,1,1,1),"cm")) +
+  xlab('variable') +
+  ylab('Variable importance(Gini)')
+```

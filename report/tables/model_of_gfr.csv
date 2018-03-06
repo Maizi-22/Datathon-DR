@@ -1,0 +1,28 @@
+,coef(95%CI),p value
+(Intercept),"-27.13 ( -164.57 , 110.3 )",0.6986
+rrt,"1.27 ( -3.68 , 6.21 )",0.6155
+age,"-0.23 ( -0.32 , -0.14 )",< 0.0001
+weight gain before dialysis perday,"0.63 ( 0.19 , 1.06 )",0.0047
+BBR,"2.74 ( -0.97 , 6.46 )",0.1472
+ACEI,"6.75 ( 4.39 , 9.11 )",< 0.0001
+vasodilator,"2.97 ( 0.62 , 5.32 )",0.0133
+ischemic heart disease ,"-2.85 ( -5.28 , -0.42 )",0.0214
+renal failure,"-6.49 ( -9.25 , -3.73 )",< 0.0001
+infection,"2.79 ( 0.46 , 5.13 )",0.0191
+SBP at admission,"-0.04 ( -0.09 , 0.01 )",0.1069
+SPO2 at admission,"-0.23 ( -0.39 , -0.08 )",0.0034
+base excess at admission,"-0.24 ( -0.48 , -0.01 )",0.0429
+BUN before dialysis,"0.08 ( 0.02 , 0.14 )",0.0063
+creatinine before dialysis,"-4.72 ( -7.24 , -2.19 )",3.00E-04
+creatinine after DR,"3.68 ( 1.01 , 6.35 )",0.007
+sodium before dialysis,"0.25 ( 0.03 , 0.47 )",0.027
+potassium at admission,"1.56 ( 0.1 , 3.01 )",0.0366
+hemoglobin after DR,"0.52 ( -0.15 , 1.19 )",0.1271
+HCO3 before dialysis,"0.41 ( 0.16 , 0.67 )",0.0018
+GFR before dialysis,"0.34 ( 0.23 , 0.45 )",< 0.0001
+GFR at admission,"0.13 ( 0.06 , 0.2 )",6.00E-04
+GFR after DR,"0.27 ( 0.14 , 0.39 )",< 0.0001
+PH before dialysis,"-16.98 ( -36.08 , 2.13 )",0.0815
+PH after DR,"19.74 ( 3.58 , 35.89 )",0.0167
+albumin at admission,"2.66 ( -0.19 , 5.51 )",0.0671
+albumin after DR,"-2.12 ( -4.91 , 0.68 )",0.1378

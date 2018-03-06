@@ -1,0 +1,144 @@
+First edit : 11/23/2017
+Update     : 12/12/2017
+Author     : Yuan Zhang
+
+Cohort:
+1.  ICD-9 include 'Heart failure'  ==> icd9 code = ['39891', '40201', '40211', '40291', '40401', '40411', '40491', '4280', '4281', '42820', '42821', '42822', '42823', '4289']          
+                                                                      -----13568
+    diuretic resistance drug:                                         -----7882
+     -- furosemide > 80  unit:IV
+     -- furosemide > 160  unit:PO
+     -- torasemide > 40  
+     -- bumetanide > 2  
+     -- ethacrynic acid > 100
+     -- lasix > 80  unit:IV
+     -- lasix > 160  unit:PO  
+     -- torsemide > 40     
+2. Left Ventricular Systolic Function:  Moderate or Severe            -----
+3. exclude ESRD                                                       -----1217
+
+Among these 1185 patients, 478 patients have add drug therapy, 368 patients change diuretic drugs,  93 recorded to have rrt.
+
+===============
+12/7/2017
+1 ) check if we miss some route 
+DRUG               ROUTE
+Furosemide         G TUBE  -- very severe
+                   IM
+                   INHALATION
+                   IV
+                   IV DRIP
+                   J TUBE
+                   NG -- same as PO
+                   PB
+                   PO
+                   PO/NG
+
+Torsemide          PO
+                   IV
+
+Bumetanide         IV
+                   IV DRIP
+                   NG
+                   ORAL
+                   PB
+                   PO
+                   PO/NG
+
+Ethacrynic Acid    IV
+                   PO
+                   PO/NG
+
+Lasix              ORAL(mg)
+
+2 ) misses data in two tables
+      item_id of the drugs:
+      furosemide (228340, 221794)  --inputevents_mv
+      bumetanide (45275, 46690)    --inputevents_cv  
+      lasix (30123)                --inputevents_cv     
+
+3 ) need to redefine diuretic resistance (extract baseline information or use urine output information)
+
+===============
+12/12/2017
+1 ) Don't need to redefine.
+2 ) Modified cohorts.
+3 ) find one strange record in patient 30414(bumetanide use super much finded in inputevents_cv)
+
+===============
+12/13/2017
+1 ) Extract comobidity info:
+      a ) Hyperlipidemia    -- icd9 code:  2722, 2724
+      b ) cardiomyopathies  -- icd9 code:  
+      c ) Ischemic Heart Disease
+      d ) sleep disorde?    -- 
+      e ) nosocomial anemia, nosocomial hypoproteinemia, nosocomial hyponatremia    -- need to defined by lab test??
+  --Notice icd-diagnoses are generated for billing purposes at the end of the hospital stay
+
+2 ) Height and weight 
+      a ) It's reasonable to believe patient 1512 have a wrong weight record on admit
+
+================
+12/14/2017
+1 ) fluidload
+    -- Only have record in inputevents_cv
+2 ) extract Total Fluid Overload Before Dialysis    -- use DR starttime for patients without RRT
+                                                    -- same as other similar variables  
+
+================
+12/15/2017
+1 ) fluidload DONE! 1076 records(need to check why the others don't have this record)
+2 ) vital signs : 
+    --   1 ) Heart rate : 211, 220045
+    --   2 ) SBP : 6, 51, 455, 6701, 220179, 220050
+    --   3 ) DBP : 8364, 8368, 8440, 8441, 8555, 220180, 220051
+    --   4 ) SPO2 : 646, 5820, 8554, 226253
+    --   5 ) Temperature : 223762, 676, 677 as celsius
+    --                     223761, 678, 679 as fahrenheit   (convert: (value-32) *5/9 )
+    --   6 ) CVP : 220074
+
+    -- We consider four timestamp:
+    --    1 ) First Time after Admit
+    --    2 ) First Time after DR
+    --    3 ) Last Time Before Dialysis
+    --    4 ) Last Time Before Discharge
+3 ) lab test :
+    --   1 ) BUN : 51006 --Urea Nitrogen
+
+Q: CVP have nagative value, is that right? 
+   And only 354 of 1271 have this record
+
+=================
+12/16/2017
+1 ) need to confirm one timestamp : patient urine output increase after diuretic resist
+  "非rrt患者增加到最大利尿剂后尿量开始增多的时间点. 尿量开始增多:尿量比前一天多且液体出量大于入量,或体重较前下降"
+
+2 ) Found a mistake! Used to decide max drug use according to 'dose'! Convert to drug unit!
+3 ) Update tables:
+    a. cohort_select
+
+=================
+12/19/2017
+1 ) Albumin: 772, 1521, 2358, 3727, 227456 unit:g/dl
+    HEMOGLOBIN: 814, 220228
+
+=================
+12/20/2017
+1. ) some variables need to re extract(no rrt patient)
+ diure_resis_to_rrt_day
+ diure_drug_use_to_rrt_day
+ total_drug_unit
+ weight_before_dialysis
+ weight_before_dialysis_time
+ weight_gain_before_rrt
+ weight_gain_before_rrt_perday
+
+2. ) Analysis plan:
+ A) baseline analysis
+ B) visualise data
+ C) association between 
+=================
+12/22/2017
+1　) revise cohort_select.sql for didn't extract some variables in compare group
+2 ) notice: some variables named ***to_rrt_day, for rrt patients it's exactly what it means, while for no-rrt 
+ 

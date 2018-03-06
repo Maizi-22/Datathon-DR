@@ -1,0 +1,313 @@
+---
+title: "DR analysis"
+output: html_document
+---
+
+```{r}
+source('~/Documents/python-projects/Datathon-DR/scr/R/help.R')
+```
+
+```{r load data, warning=FALSE, echo=FALSE, message=FALSE}
+library(readr)
+basic_info <- read_csv("~/Documents/python-projects/Datathon-DR/data/basic_info.csv")
+
+# age above 300 need to convert
+basic_info$age[basic_info$age >= 300] <- 90
+basic_info[, c("gender", "add_drug_therapy", "change_drug_therapy", "total_drug_unit", "rrt")][is.na(basic_info[, c("gender", "add_drug_therapy", "change_drug_therapy", "total_drug_unit", "rrt")])] <- 0
+# remove timestamp data
+basic_info <- basic_info[, -c(1, 5, 6, 8, 10, 11, 13:15, 19, 21)]
+# convert binary variable to factor
+basic_info$gender[which(basic_info$gender == 'F')] <- 0
+basic_info$gender[which(basic_info$gender == 'M')] <- 1
+basic_info[, c(3, 4, 7, 8, 10)] <- lapply(basic_info[, c(3, 4, 7, 8, 10)], as.factor)
+
+# drug use data 
+druguse <- read_csv("~/Documents/python-projects/Datathon-DR/data/druguse.csv")[, -1]
+druguse[, c(2:18)] <- lapply(druguse[, c(2:18)], as.factor)
+
+# nosocomial data by caoyang
+nosocomial <- read_csv("~/Documents/python-projects/Datathon-DR/data/nosocomial.csv")[, -c(1, 3:5)]
+nosocomial[is.na(nosocomial)] <- 0
+nosocomial[, c(2:4)] <- lapply(nosocomial[, c(2:4)], as.factor)
+
+# fluid load data
+fluidload <- read_csv("~/Documents/python-projects/Datathon-DR/data/fluidload.csv")[, -1]
+
+# vital data
+vital <- read_csv("~/Documents/python-projects/Datathon-DR/data/vital.csv")[, -1]
+
+# lab test
+lab <- read_csv("~/Documents/python-projects/Datathon-DR/data/lab.csv")[, -c(14, 27, 40)]
+lab[, c(1:49)] <- lapply(lab[, c(1:49)], as.numeric)
+names(lab)[49] <- 'bun_dis' # wrong name of bun on discharge
+```
+
+```{r merge data, warning=FALSE, echo=FALSE, message=FALSE}
+data.raw <- merge(basic_info, druguse, by.x = 'hadm_id', by.y = 'hadm_id', all.x = TRUE)
+data.raw <- merge(data.raw, fluidload, by.x = 'hadm_id', by.y = 'hadm_id', all.x = TRUE)
+data.raw <- merge(data.raw, nosocomial, by.x = 'hadm_id', by.y = 'hadm_id', all.x = TRUE)
+data.raw <- merge(data.raw, vital, by.x = 'hadm_id', by.y = 'hadm_id', all.x = TRUE)
+data.raw <- merge(data.raw, lab, by.x = 'hadm_id', by.y = 'hadm_id', all.x = TRUE)
+```
+
+###Preprocess -- missing values
+* 1. ) several patients may have wrong weight values, since they are no-RRT patients, remove them entirly
+* 2. ) cvp have many missing values( > 863/1271), so do urine_acid, bnp and base excess(this one exclude admission), better remove them before analysis.
+* 3. ) And the third timestamp(get better date) have about a half missing data, for more then 500 no-rrt patients can't find a urine increase time according to the definition. This may cause bias, but analysis below will still include these variables.
+
+```{r warning=FALSE, echo=FALSE, message=FALSE}
+# final dataset
+# remove cvp, urine acid, bnp and base excess(not adm)
+data.std <- data.raw[, -c(65:68, 74, 78, 86, 87, 90, 98, 99, 102, 110, 111, 114)]
+```
+
+###1. Baseline characteristics, stratified by rrt
+
+```{r warning=FALSE, echo=FALSE, message=FALSE}
+# create baseline summary
+library(tableone)
+catvars <- c("age", "gender", "height", "weight_adm","bmi", "bbr", "inotropes_vasopressor", "acei", "mra", "vasodilator", "ischemic_heart_disease", "cardiomyopathies", "valvular_disease", "atrial_fibrilation", "hyperlipidemia", "hypertension", "diabetes", "sleep_disordered_breathing", "renal_failure", "anemia", "infection", "alcohol_abuse", "hr_adm", "sbp_adm", "dbp_adm", "spo2_adm", "tem_adm", "gfr_adm", "bnp_adm", "base_excess_adm", "hco3_adm", "ph_adm", "urine_acid_adm", "hemoglobin_adm", "albumin_adm", "potassium_adm", "sodium_adm", "creatinine_adm", "bun_adm") 
+test.table <- CreateTableOne(vars=catvars, strata = "rrt", data = data.std)
+a <- print(test.table, quote = TRUE)[, -4]
+g1 <- paste('Non RRT (n=', a[1,1], ')')
+g2 <- paste('RRT (n=', a[1,2], ')')
+colnames(a) <- c(g1, g2, 'p-value')
+a <- a[-1, ]
+# write.csv(a, '~/Documents/python-projects/Datathon-DR/report/baseline_analysis.csv')
+```
+
+###2. Characteristics of fluid value and outcomes
+
+```{r}
+catvars <- c("los_hos", "los_icu", "hospital_expire_flag", "add_drug_therapy", "change_drug_therapy", "fluid_overload_to_rrt", "daily_fluid_overload_to_rrt", "urine_output_to_rrt", "daily_uo_to_rrt", "total_input_to_discharge", "total_output_to_discharge", "fluid_overload_to_dis", "urine_output_to_dis") 
+test.table <- CreateTableOne(vars=catvars, strata = "rrt", data = data.std)
+a <- print(test.table, quote = TRUE)[, -4]
+g1 <- paste('Non RRT (n=', a[1,1], ')')
+g2 <- paste('RRT (n=', a[1,2], ')')
+colnames(a) <- c(g1, g2, 'p-value')
+a <- a[-1, ]
+# write.csv(a, '~/Documents/python-projects/Datathon-DR/report/outcomevariable_summary.csv')
+```
+
+###2. Visiualize data
+
+####a.) There are 1217 patients in our dataset, among which 561 add drug dose after diuretic resist, 169 change drug, and 93 of them finally had dialysis.
+```{r warning= FALSE, echo = FALSE, message=FALSE}
+# table(data.std$change_drug_therapy)
+# table(data.std$add_drug_therapy)
+# table(data.std$rrt)
+x <- c(169, 561, 394, 93)
+labels <- c('Change drug\n 169(20.5%)', 'Add drug\n 561(68.2%)', 'Other\n 394(32.4%)', 'Dialysis\n 93(11.3%)')
+pie(x, labels, main = 'Therapy applied in diuretic resist patients')
+```
+
+####b. ) 247 of them died in hospital. 970 survived
+
+```{r warning= FALSE, echo = FALSE, message=FALSE}
+# table(data.std$hospital_expire_flag)
+x <- c(247, 970)
+labels <- c('Dead\n 247(20.30%)', 'Survived\n 970(79.7%)')
+pie(x, labels, main = 'Death percentage in diuretic resist patients')
+```
+
+###3. Missing data interpolation
+* 1. Case delete for patients with many missing values
+* 2. Linear interpolation for lab test values(e.g heart rate after rrt was interpolate use hr on admmission, hr after DR and hr on discharge)
+
+```{r warning= FALSE, echo = FALSE, message=FALSE, results=FALSE, }
+# first deal with missing data
+mydata <- DataInterp(data.std)
+summary(mydata)
+```
+
+###In our dataset, rrt : no-rrt is almost 1:10, it's very unbalanced. 
+####Several methods can be applied to handle a unbalanced dataset, including oversampling, downsampling, synthetic method etc.
+```{r warning= FALSE, echo = FALSE, message=FALSE}
+library(ROSE)
+# use oversampling to handle unbalanced data
+mydata.rose1 <- ovun.sample(rrt ~ ., data = mydata[, -1], method = "over")$data
+# table(mydata.rose1$rrt)
+mydata.rose2 <- ovun.sample(rrt ~ ., data = mydata[, -1], method = "both")$data
+# table(mydata.rose0$rrt)
+mydata.rose3 <- ROSE(rrt ~., data = mydata[, -1], seed = 1)$data
+# table(mydata.rose2$rrt)
+mydata.rose0 <- ovun.sample(rrt ~ ., data = mydata[, -1], method = "under" )$data
+# table(mydata.rose0$rrt)
+```
+
+###Use random forest to see if the two cluster can be seperate
+####While the first pic applied oversampling method, the second is sampled data use synthetic data sampling method
+####The first may have overfitting issuse!
+```{r warning= FALSE, echo = FALSE, message=FALSE}
+library(randomForest)
+mydata.rose1$rrt <- as.factor(mydata.rose1$rrt)
+set.seed(1234)
+# mydata.rf <- randomForest(rrt~.,data = mydata.rose1, ntree = 500, importance = TRUE)
+# importance(mydata.rf)
+mydata.rf <- randomForest(rrt~.,data = mydata.rose0, proximity = TRUE)
+
+MDSplot(mydata.rf, mydata.rose0$rrt, palette = c('blue', 'orange'), pch = as.numeric(mydata.rose0$rrt))
+
+# up&over sampling method
+mydata.rose2$rrt <- as.factor(mydata.rose3$rrt)
+mydata.rf <- randomForest(rrt~.,data = mydata.rose3, proximity = TRUE)
+
+MDSplot(mydata.rf, mydata.rose3$rrt, palette = c('blue', 'orange'), pch = as.numeric(mydata.rose3$rrt))
+```
+
+### Use PCA to deduct dimension
+####It's not clear that rrt and no-rrt can be seperate.
+####Here's rouse a question, is PCA proper to show the distinguish of clusters?
+```{r warning= FALSE, echo = FALSE, message=FALSE}
+pca.data <- mydata
+pca.data[,-1] <- lapply(pca.data[,-1], as.character)
+pca.data[,-1] <- lapply(pca.data[,-1], as.numeric)
+
+mydata.pr2 <- prcomp(pca.data[, -1], scale. = T)
+mydata.existing.df2 <- as.data.frame(mydata.pr2$x)
+
+library(ggplot2)
+test.data2 <- cbind(pca.data, mydata.existing.df2[1:2])
+ggplot(test.data2, aes(x = PC1, y = PC2, group = rrt)) + 
+  geom_point(aes(colour = factor(rrt))) +
+  ggtitle('Scatter plot of two main components')
+
+pca.data2 <- mydata.rose1
+pca.data2[, ] <- lapply(mydata.rose1, as.character)
+pca.data2[, ] <- lapply(pca.data2, as.numeric)
+
+mydata.pr <- prcomp(pca.data2[, -1], scale. = T)
+mydata.df <- as.data.frame(mydata.pr$x)
+test.data <- cbind(mydata.rose1, mydata.df[1:2])
+ggplot(test.data, aes(x = PC1, y = PC2, group = rrt)) + 
+  geom_point(aes(colour = factor(rrt))) +
+  ggtitle('Scatter plot of two main components, after oversampling')
+
+pca.data3 <- mydata.rose2
+pca.data3[, ] <- lapply(mydata.rose2[, ], as.character)
+pca.data3[, ] <- lapply(pca.data2[, ], as.numeric)
+
+mydata.pr <- prcomp(pca.data3, scale. = T)
+mydata.df <- as.data.frame(mydata.pr$x)
+test.data <- cbind(mydata.rose2, mydata.df[1:2])
+ggplot(test.data, aes(x = PC1, y = PC2, group = rrt)) + 
+  geom_point(aes(colour = factor(rrt))) +
+  ggtitle('Scatter plot of two main components, after up and over sampling')
+
+pca.data4 <- mydata.rose3
+pca.data4[, ] <- lapply(mydata.rose3[, ], as.character)
+pca.data4[, ] <- lapply(pca.data3[, ], as.numeric)
+
+mydata.pr <- prcomp(pca.data4, scale. = T)
+mydata.df <- as.data.frame(mydata.pr$x)
+test.data <- cbind(mydata.rose3, mydata.df[1:2])
+ggplot(test.data, aes(x = PC1, y = PC2, group = rrt)) + 
+  geom_point(aes(colour = factor(rrt))) +
+  ggtitle('Scatter plot of two main components, after artifically sampling')
+
+pca.data5 <- mydata.rose0
+pca.data5[, ] <- lapply(mydata.rose0[, ], as.character)
+pca.data5[, ] <- lapply(pca.data5[, ], as.numeric)
+
+mydata.pr <- prcomp(pca.data5, scale. = T)
+mydata.df <- as.data.frame(mydata.pr$x)
+test.data <- cbind(mydata.rose0, mydata.df[1:2])
+ggplot(test.data, aes(x = PC1, y = PC2, group = rrt)) + 
+  geom_point(aes(colour = factor(rrt))) +
+  ggtitle('Scatter plot of two main components, after up sampling')
+```
+
+### Apply lasso regression to select variables for linear regression, use orginal dataset
+```{r warning= FALSE, echo = FALSE, message=FALSE}
+library(glmnet)
+# lasso regression
+# =================
+data <- data.std[!is.na(data.std$nosocomial_anemia),]
+data <- DataInterp(data)
+data <- train.data
+y <- as.numeric(as.character(data$rrt))
+x <- data[, c('age',  'gender',  'add_drug_therapy',  'change_drug_therapy',  'total_drug_unit',  'height',  'weight_adm',  'weight_after_dr',  'weight_before_dialysis',  'weight_gain_before_rrt',  'weight_gain_before_rrt_perday',  'bbr',  'inotropes_vasopressor',  'acei',  'mra',  'vasodilator',  'ischemic_heart_disease',  'cardiomyopathies',  'valvular_disease',  'atrial_fibrilation',  'hyperlipidemia',  'hypertension',  'diabetes',  'sleep_disordered_breathing',  'renal_failure', 'anemia',  'alcohol_abuse',  'nosocomial_hypoproteinemia',  'nosocomial_anemia', 'nosocomial_hyponatremia',  'fluid_overload_to_rrt',  'daily_fluid_overload_to_rrt',  'urine_output_to_rrt',  'daily_uo_to_rrt',  'hr_adm',  'hr_therapy',  'hr_dr',  'sbp_adm',  'sbp_therapy',  'sbp_dr',  'dbp_adm',  'dbp_therapy',  'dbp_dr',  'spo2_adm',  'spo2_dr',  'spo2_therapy',  'tem_adm',  'tem_dr',  'tem_therapy',  'base_excess_adm',  'bun_adm',  'creatinine_adm',  'creatinine_dr',  'creatinine_therapy',  'sodium_adm',  'sodium_dr',  'sodium_therapy',  'potassium_adm',  'potassium_dr',  'potassium_therapy',  'hemoglobin_adm',  'hemoglobin_dr',  'hemoglobin_therapy',  'hco3_adm',  'hco3_dr',  'hco3_therapy',  'gfr_adm',  'gfr_dr',  'gfr_therapy',  'ph_adm',  'ph_dr',  'ph_therapy',  'albumin_adm',  'albumin_dr',  'albumin_therapy')]
+x <- data[, -c(1, 10)]
+x[, ] <- lapply(x[, ], as.character)
+x[, ] <- lapply(x[, ], as.numeric)
+x <- as.matrix(x[, ])
+
+set.seed(999)
+fit.lasso <- cv.glmnet(x, y, family='binomial', alpha=1, parallel=TRUE, standardize=TRUE, type.measure='auc')
+plot(fit.lasso)
+fit.lasso$lambda.min
+fit.lasso$lambda.1se
+coef(fit.lasso, s=fit.lasso$lambda.min)
+```
+
+####Apply linear regression for all patients, exclude variables related to the third timestamp
+```{r warning= FALSE, echo = FALSE, message=FALSE}
+# model1 <- glm(rrt ~ age + gender + add_drug_therapy + change_drug_therapy + total_drug_unit + height + weight_adm + weight_after_dr + weight_before_dialysis + weight_gain_before_rrt_perday + bbr +  inotropes_vasopressor + acei + mra + vasodilator + ischemic_heart_disease + cardiomyopathies + valvular_disease + atrial_fibrilation + hyperlipidemia + hypertension + diabetes + sleep_disordered_breathing + renal_failure + anemia + alcohol_abuse + nosocomial_hypoproteinemia + nosocomial_anemia + nosocomial_hyponatremia + fluid_overload_to_rrt + daily_fluid_overload_to_rrt + urine_output_to_rrt + daily_uo_to_rrt + hr_adm + hr_therapy + hr_dr + sbp_adm + sbp_therapy + sbp_dr + dbp_adm + dbp_therapy + dbp_dr + spo2_adm + spo2_dr + spo2_therapy + tem_adm + tem_dr + tem_therapy + base_excess_adm + bun_adm + creatinine_adm + creatinine_dr + creatinine_therapy + sodium_adm + sodium_dr + sodium_therapy + potassium_adm + potassium_dr + potassium_therapy + hemoglobin_adm + hemoglobin_dr + hemoglobin_therapy + hco3_adm + hco3_dr + hco3_therapy + gfr_adm + gfr_dr + gfr_therapy + ph_adm + ph_dr + ph_therapy + albumin_adm + albumin_dr + albumin_therapy
+#               , family = binomial(link = 'logit')
+#               , data = mydata)
+# summary(model1)
+# model2 <- step(model1)
+model2 <- glm(rrt ~ gender + add_drug_therapy + weight_adm + 
+    weight_after_dr + weight_gain_before_rrt_perday + acei + 
+    mra + vasodilator + atrial_fibrilation + hyperlipidemia + 
+    renal_failure + nosocomial_hypoproteinemia + nosocomial_anemia + 
+    nosocomial_hyponatremia + urine_output_to_rrt + daily_uo_to_rrt + 
+    hr_therapy + hr_dr + sbp_therapy + dbp_adm + tem_therapy + 
+    sodium_therapy + potassium_therapy + hemoglobin_adm + hco3_dr + 
+    gfr_dr + gfr_therapy
+              , family = binomial(link = 'logit')
+              , data = mydata)
+summary(model2)
+# summary OR and 95%CI for output 
+a <- cbind(exp(coef(model2)), exp(confint(model2)), p_value = coef(summary(model2))[, 4])
+b <- round(a, 5)
+b <- cbind(paste(b[, 1], '(', b[, 2], ',', b[, 3], ')'), b[, 4])
+b <- as.data.frame(b)
+rownames(b) <- rownames(a)
+colnames(b) <- c('OR (95%CI)', 'p value')
+b
+# write.csv(b, '~/Documents/python-projects/Datathon-DR/report/model_output.csv')
+```
+
+
+
+Use random forest to pretict
+
+At first the result is so good, so I examine the dataset, notice that variables on the third timestamp have many missings for non-rrt patients(about 500 patients cann't defined this time). In classification, do not include these variables.
+
+```{r}
+library(randomForest)
+library(pROC)
+library(ROCR)
+library(dplyr)
+data <- data.std[!is.na(data.std$nosocomial_anemia),]
+data <- DataInterp(data)
+train.data <- sample_frac(data, 0.7)
+test.data <- anti_join(data, train.data)
+train.data <- DataInterp(train.data)
+test.data <- DataInterp(test.data)
+# summary(train.data$rrt)
+# summary(test.data$rrt)
+
+rf <- randomForest(rrt ~ creatinine_therapy + gfr_therapy + spo2_adm + bun_therapy + urine_output_to_discharge
+               , data = train.data[, -c(1, 4:6)], ntree=100, proximity=TRUE,importance=TRUE)  
+importance(rf)
+varImpPlot(rf, n.var = 20, main = 'Variable importance, Random Forest')
+
+test.data$pred2 <- predict(rf, test.data, type = 'prob')
+rocobj1 <- plot.roc(test.data$rrt,
+                      test.data$pred2[, 2],
+                      percent=TRUE,ci=TRUE,col="#1c61b6",
+                      print.auc=TRUE)
+
+pred3 <- predict(rf, test.data)
+z <- table(predict(rf, test.data), test.data$rrt)
+q <- sum(diag(z))/sum(z)
+```
+
+Test logistic regression 
+```{r}
+result <- RegressionAndPredict(train.data, test.data, 'rrt')
+result
+```
+

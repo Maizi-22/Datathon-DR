@@ -1,0 +1,33 @@
+,coef(95%CI),p value
+(Intercept),"-15463.98 ( -152926.1 , 121998.13 )",0.8253
+age,"-181.11 ( -271.3 , -90.92 )",1.00E-04
+add drug therapy,"9981.58 ( 7777.23 , 12185.94 )",< 0.0001
+weight after DR,"104.07 ( 61.02 , 147.11 )",< 0.0001
+weight gain before dialysis perday,"-327.33 ( -747.18 , 92.52 )",0.1264
+inotropes vasopressor,"6464.73 ( 3908.49 , 9020.97 )",< 0.0001
+valvular disease,"2468.88 ( -487.72 , 5425.47 )",0.1016
+atrial fibrilation,"2399.63 ( 164.46 , 4634.79 )",0.0354
+hypertension,"2067.69 ( -673.99 , 4809.37 )",0.1392
+diabetes,"-3031.86 ( -5217.5 , -846.22 )",0.0066
+anemia,"2697.36 ( 490.65 , 4904.06 )",0.0166
+infection,"5383.96 ( 3111.66 , 7656.27 )",< 0.0001
+alcohol_abuse,"-5042.5 ( -10088.76 , 3.77 )",0.0502
+fluid overload before dialysis,"0.13 ( 0.03 , 0.23 )",0.009
+urine output before dialysis,"1.12 ( 0.98 , 1.25 )",< 0.0001
+daily urine output before dialysis,"1.67 ( 0.77 , 2.58 )",3.00E-04
+SPO2 before dialysis,"143.65 ( 1.21 , 286.09 )",0.0481
+temperature before dialysis,"927.63 ( 390.4 , 1464.87 )",7.00E-04
+temperature at admission,"-743.31 ( -1348.35 , -138.26 )",0.0161
+temperature after DR,"1635.41 ( 310.26 , 2960.56 )",0.0156
+BUN before dialysis,"189.88 ( 111.69 , 268.07 )",< 0.0001
+BUN after DR,"-97.8 ( -176.06 , -19.54 )",0.0144
+creatinine before dialysis,"-1838.81 ( -3310.9 , -366.73 )",0.0144
+sodium after DR,"-218.41 ( -440.12 , 3.31 )",0.0535
+potassium at admission,"-1116.47 ( -2530.9 , 297.96 )",0.1217
+HCO3  before dialysis,"879.35 ( 551.25 , 1207.45 )",< 0.0001
+HCO3 after DR,"-828.61 ( -1169.05 , -488.18 )",< 0.0001
+GFR at admission,"47.81 ( -8.78 , 104.41 )",0.0977
+PH  before dialysis,"19418.77 ( 973.99 , 37863.55 )",0.0391
+PH after DR,"-22544.67 ( -37968.4 , -7120.93 )",0.0042
+albumin before dialysis,"-3449.49 ( -5187.36 , -1711.62 )",1.00E-04
+rrt,"11873.03 ( 7059.12 , 16686.93 )",< 0.0001
